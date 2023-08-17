@@ -1,0 +1,93 @@
+﻿@model PagedList.IPagedList<MVCAvedianceExam.Models.ViewModels.ProductViewModel>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="container-fluid">
+    <div class="my-5">
+        <div class="row">
+            <h2>Avilable Product</h2>
+            <div class="col-md-12  table-responsive">
+                <table class="table table-bordered text-center">
+                    <tr>
+                        <th></th>
+                        <th>Product Id</th>
+                        <th>@Html.ActionLink("Product Name", "Index", new { SortOrder = ViewBag.SortNameParam })</th>
+                        <th>Purchase Date</th>
+                        <th>Supplier Name</th>
+                        <th>Email</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Product Image</th>
+                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", new { id = item.ProductId }, new { @class = "btn btn-warning" })
+                                @Html.ActionLink("Delete", "Delete", new { id = item.ProductId }, new { @class = "btn btn-danger" })
+                                <a href="#" class="btn btn-info" name="details" onclick='DetailsRecord("+@item.ProductId+")' data-bs-toggle="modal" data-bs-target="#detailsModal">Details</a>
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.ProductId)</td>
+                            <td>@Html.DisplayFor(modelItem => item.ProductName)</td>
+                            <td>
+                                @Convert.ToString(string.Format("{0:dd/MM/yyyy}", item.PurchaseDate))
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.SupplierName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Quantity)</td>
+                            <td>@Html.DisplayFor(modelItem => item.UnitPrice)</td>
+                            <td>
+                                <img src="@Url.Content(item.ImageUrl)" alt="@item.ImageName" width="70" height="90" />
+                            </td>
+                        </tr>
+                    }
+                </table>
+                <br />
+                Page@(Model.PageCount<Model.PageNumber?0:Model.PageNumber)of @Model.PageCount
+                @Html.PagedListPager(Model, Page => Url.Action("Index", new { Page, SortOrder = ViewBag.CurrentSort, CurrentFilter = ViewBag.CurrentFilter }))
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel">Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="partialDiv">
+                        @if (ViewBag.Details == "Show")
+                        {
+                            @Html.Partial("_DetailsRecord", Model);
+                            ViewBag.Details = "";
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function DetailsRecord(productId) {
+        $.ajax({
+            url: "/Products/Details?id=" + productId,
+            type: "GET",
+            data: "",
+            contentType: 'application/json; charset = utf-8',
+            success: function (data) {
+                $('#partialDiv').show();
+                $('#partialDiv').html(data);
+            },
+            error: function () {
+                alert("Error occured")
+            }
+        })
+    }
+</script>
+
+
+

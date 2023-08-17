@@ -1,0 +1,21 @@
+﻿@model IEnumerable<MVCAvedianceExam.Models.Supplier>
+<h2>Supplier List</h2>
+<div>
+    <table class="table table-bordered table-striped">
+        <tr>
+            <td colspan="2"><h6 class="text-danger">Page Loading @@ : @DateTime.Now.ToString()</h6></td>
+        </tr>
+        <tr>
+            <th>Supplier Id</th>
+            <th>Supplier Name</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.SupplierId</td>
+                <td>@item.SupplierName</td>
+            </tr>
+        }
+    </table>
+</div>
+
